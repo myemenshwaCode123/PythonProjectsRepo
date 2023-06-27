@@ -4,6 +4,16 @@ import numpy as np
 from sklearn import datasets, linear_model
 from sklearn.metrics import mean_squared_error\
 
+#This PyCharm project was my first project using python that dealt with data science.
+#This Python project utilizes linear regression to predict diabetes progression based on a single feature.
+#The code begins by importing necessary libraries for data visualization, numerical operations, and machine learning.
+#The diabetes dataset is loaded using scikit-learns load diabetes () function.
+#The data is prepared by extracting the desired feature and splitting it into training and testing sets.
+#A linear regression model is then trained on the training data.
+#Predictions are made on the test data, and the accuracy is evaluated using mean squared error.
+#The learned coefficients and intercept of the regression model are printed.
+#The results are visualized through scatter and line plots, displaying the test data and the predicted values.
+
 disease = datasets.load_diabetes()
 
 #print(disease)

@@ -3,6 +3,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 
+#I was wondering the possibility of running a linear regression on some data me and a couple of classmates have
+#collected and analyzed for a STAT class at my current school, (University of Maryland), about the best
+#possible way for students to hear and learn about job fairs.
+#The CSV file we had all off our data on is included in the Github repository
+
 jobs = pd.read_csv("Job Fair Survey.csv")
 #print(jobs.head())
 print(jobs.columns)

@@ -3,11 +3,19 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 import math
+from sklearn.preprocessing import StandardScaler
+
+# In this code I am exploring the titanic dataset more specifically the people on board, both those who survived
+# and those who did not, ultimately trying to come to a better explanation and answer as to what factors
+# made people more likely to survive the sinking of the Titanic, by looking at our titanic dataset and
+# analyzing which factor would have been contributed the most to the chances of a person's survival
+# on the ship or not, using logistic regression to predict survival.
+
 
 #Gather your Data
 
 titanic_data = pd.read_csv("Titanic.csv")
-#print(titanic_data.head())
+print(titanic_data.head())
 print("# of passengers in original data: " + str(len(titanic_data.index)))
 
 #Analyzing Data
@@ -41,39 +49,49 @@ titanic_data.dropna(inplace=True)
 sns.heatmap(titanic_data.isnull(), yticklabels=False, cbar=False)
 titanic_data.isnull().sum()
 print(titanic_data.head(2))
-#We have a lot of String values, so we need to convert to categroical variables inorder to run logistic regression
-#Let's use dummy varibales, keeping in mind logistic regression only takes in 2 variables
-sex = pd.get_dummies(titanic_data['Sex'],drop_first=True)
-print(sex.head(5))
-embark = pd.get_dummies(titanic_data['Embarked'],drop_first=True)
-print(embark.head(5))
-Pcl = pd.get_dummies(titanic_data['Pclass'],drop_first=True)
-print(Pcl.head(5))
-titanic_data=pd.concat([titanic_data,sex,embark,Pcl],axis=1)
-print(titanic_data)
-titanic_data.drop(['Sex','Embarked','PassengerId','Pclass','Name','Ticket'],axis=1,inplace=True)
-print(titanic_data.dtypes)
-print(titanic_data.head())
 
-#Train Data
+# We have a lot of String values, so we need to convert them into categorical variables
+# Let's use dummy variables, keeping in mind logistic regression only takes in 2 variables
+sex = pd.get_dummies(titanic_data['Sex'], drop_first=True)
+embark = pd.get_dummies(titanic_data['Embarked'], drop_first=True)
+Pcl = pd.get_dummies(titanic_data['Pclass'], drop_first=True)
 
-X = titanic_data.drop("Survived",axis=1)
+# Convert dummy variables to integers (0 and 1)
+sex = sex.astype(int)
+embark = embark.astype(int)
+Pcl = Pcl.astype(int)
+
+# Concatenate the dummy variables with the original dataframe
+titanic_data = pd.concat([titanic_data, sex, embark, Pcl], axis=1)
+
+# Drop unnecessary columns
+titanic_data.drop(['Sex', 'Embarked', 'PassengerId', 'Pclass', 'Name', 'Ticket'], axis=1, inplace=True)
+
+# Convert column names to strings
+titanic_data.columns = titanic_data.columns.astype(str)
+
+# Train Data
+X = titanic_data.drop("Survived", axis=1)
 y = titanic_data["Survived"]
+
+# Scale the data
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
 from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.3, random_state=1)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)
 from sklearn.linear_model import LogisticRegression
-
-logmodel = LogisticRegression()
+logmodel = LogisticRegression(max_iter=1000)
 logmodel.fit(X_train, y_train)
+
 predictions = logmodel.predict(X_test)
-from sklearn.metrics import classification_report
-print(classification_report(y_test,predictions))
-from sklearn.metrics import confusion_matrix
-print(confusion_matrix(y_test,predictions))
+
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
 #Accuracy Check
+print(classification_report(y_test, predictions))
+print(confusion_matrix(y_test, predictions))
+accuracy = accuracy_score(y_test, predictions)
+print("Accuracy Score: "), print(accuracy * 100)
 
-#Resulted in an accuracy percentage of 78%
-from sklearn.metrics import accuracy_score
-accuracy_score(y_test,predictions)*100

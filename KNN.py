@@ -64,7 +64,7 @@ print(classification_report(y_test,pred))
 error_rate = []
 for i in range(1,40):
 
-    knn = KNeighborsClassifier(n_neighbors=1)
+    knn = KNeighborsClassifier(n_neighbors=i)
     knn.fit(X_train,y_train)
     pred_i = knn.predict(X_test)
     error_rate.append(np.mean(pred_i != y_test))
@@ -75,9 +75,9 @@ plt.plot(range(1,40),error_rate,color='blue', linestyle='dashed', marker='o', ma
 plt.title('Error Rate vs. K Value')
 plt.xlabel('K')
 plt.ylabel('Error Rate')
+plt.show()
 
 # The plot reads the value 21 for K as the best value that produces the least amount of error
-# Cant see plot on pycharm but on jupyter it works
 
 # Now with K = 21
 knn = KNeighborsClassifier(n_neighbors=21)
